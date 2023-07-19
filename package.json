@@ -1,7 +1,7 @@
 {
   "name": "use-controller",
-  "version": "1.0.0",
-  "description": "Object based state handler",
+  "version": "1.1.0",
+  "description": "Functional state controller",
   "main": "lib/main.js",
   "module": "lib/main.esm.js",
   "author": "Felipe Rodriguez Herrera",
