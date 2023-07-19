@@ -1,0 +1,53 @@
+{
+  "name": "use-state-handler",
+  "version": "2.8.2",
+  "description": "Object based state handler",
+  "main": "lib/main.js",
+  "module": "lib/main.esm.js",
+  "author": "Felipe Rodriguez Herrera",
+  "license": "MIT",
+  "types": "lib/main.d.ts",
+  "dependencies": {},
+  "scripts": {
+    "build": "rollup -c",
+    "deploy": "yarn config set version-git-message ",
+    "postdeploy": "yarn version --minor",
+    "parche": "yarn config set version-git-message ",
+    "postparche": "yarn version --patch",
+    "version": "git add -A ",
+    "postversion": "git push origin && git push origin --tags && yarn config set version-git-message 'v%s' "
+  },
+  "files": [
+    "lib",
+    "package.json"
+  ],
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {
+    "@types/node": "^15.3.0",
+    "@types/react": "^17.0.20",
+    "react": "^17.0.2",
+    "rollup": "^2.48.0",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "typescript": "^4.2.4"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ksoze84/useStateHandler.git"
+  },
+  "keywords": [
+    "object",
+    "class",
+    "hook",
+    "state",
+    "react"
+  ],
+  "bugs": {
+    "url": "https://github.com/ksoze84/useStateHandler/issues"
+  },
+  "homepage": "https://github.com/ksoze84/useStateHandler#readme"
+}
