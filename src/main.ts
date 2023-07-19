@@ -38,7 +38,7 @@ function useController<T, H>( fun : ( c : Controller<T> ) => H, initial_value? :
 
 function useController<T, H>( fun : ( c : Controller<T> ) => H, initial_value: T | (() => T)) : [T | undefined, Controller<T> & H ]  {
   const cs                          = React.useState<T>( initial_value );    
-  const [controller, ]                 = React.useState<Controller<T> & H>( () => initHandler( cs, fun )  );
+  const [controller, ]              = React.useState<Controller<T> & H>( () => initHandler( cs, fun )  );
 
   controller.state = cs[0];
 
