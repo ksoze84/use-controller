@@ -1,52 +1,49 @@
 import React from "react"
 
-abstract class StateHandler<T> {
+class Controller<T> {
 
   public    state?              : T;
   readonly  setState            : React.Dispatch<React.SetStateAction<T>>; 
-  protected instanceCreated?    : () => void;
 
-  constructor( hs : HandlerSetter<T>) { 
+
+  constructor( hs : ControllerSetter<T>) { 
     this.setState = hs[1]; 
   }
 
 }
 
-abstract class StateHandlerState<T> extends StateHandler<T> {
+abstract class ControllerWState<T> extends Controller<T> {
   abstract state    : T;
 }
 
 
-function initHandler<T, H extends StateHandler<T>>( hs : HandlerSetter<T>, handlerClass : new ( s : HandlerSetter<T>, state? : T ) => H ) {
+function initHandler<T, H>( hs : ControllerSetter<T>, fun? : ( s : ControllerSetter<T> ) => H ) {
   
-  const handler = new handlerClass( hs );
+  const controller = new Controller( hs );
 
   if(hs[0]) 
-    handler.state = hs[0];
-  else if( handler.state ){
-    hs[1]( handler.state );
-    hs[0]=handler.state;
-  }
-  
-  handler['instanceCreated'] && handler['instanceCreated']()
+    controller.state = hs[0];
 
-  return handler
+  if(fun)
+    Object.assign(controller, fun( controller ) )
+
+  return controller
   
 }
 
-type HandlerSetter<T> =  [T, React.Dispatch<React.SetStateAction<T>>];
+type ControllerSetter<T> =  [T, React.Dispatch<React.SetStateAction<T>>];
 
-function useStateHandler<T, H extends StateHandler<T>>( handlerClass : new ( s : HandlerSetter<T>, state? : T ) => H, initial_value : T | (() => T)) : [T, H]
-function useStateHandler<T, H extends StateHandler<T>>( handlerClass : new ( s : HandlerSetter<T>, state? : T ) => H, initial_value? : T | (() => T)) : [ H extends StateHandlerState<T> ? T : T | undefined, H]
+function useController<T, H>( handlerClass : new ( s : ControllerSetter<T>, state? : T ) => H, initial_value : T | (() => T)) : [T, H]
+function useController<T, H>( handlerClass : new ( s : ControllerSetter<T>, state? : T ) => H, initial_value? : T | (() => T)) : [ H extends ControllerWState<T> ? T : T | undefined, H]
 
-function useStateHandler<T, H extends StateHandler<T>>( handlerClass : new ( s : HandlerSetter<T>, state? : T ) => H, initial_value: T | (() => T)) : [T | undefined, H]  {
+function useController<T, H>( fun : ( s : ControllerSetter<T> ) => H, initial_value: T | (() => T)) : [T | undefined, Controller<T> & H ]  {
   const hs                          = React.useState<T>( initial_value );    
-  const [handler, ]                 = React.useState<H>( () => initHandler( hs, handlerClass )  );
+  const [handler, ]                 = React.useState<H>( () => initHandler( hs, fun )  );
 
   handler.state = hs[0];
 
   return [ handler.state, handler ];
 }
 
-export { StateHandler, useStateHandler, HandlerSetter }
+export { Controller as StateHandler, useController as useStateHandler, ControllerSetter as HandlerSetter }
 
