@@ -17,7 +17,7 @@ abstract class ControllerWState<T> extends Controller<T> {
 }
 
 
-function initHandler<T, H>( hs : ControllerSetter<T>, fun? : ( s : ControllerSetter<T> ) => H ) {
+function initHandler<T, H>( hs : ControllerSetter<T>, fun? : ( s : Controller<T> ) => H ) {
   
   const controller = new Controller( hs );
 
@@ -27,23 +27,23 @@ function initHandler<T, H>( hs : ControllerSetter<T>, fun? : ( s : ControllerSet
   if(fun)
     Object.assign(controller, fun( controller ) )
 
-  return controller
+  return controller as Controller<T> & H
   
 }
 
 type ControllerSetter<T> =  [T, React.Dispatch<React.SetStateAction<T>>];
 
-function useController<T, H>( handlerClass : new ( s : ControllerSetter<T>, state? : T ) => H, initial_value : T | (() => T)) : [T, H]
-function useController<T, H>( handlerClass : new ( s : ControllerSetter<T>, state? : T ) => H, initial_value? : T | (() => T)) : [ H extends ControllerWState<T> ? T : T | undefined, H]
+function useController<T, H>( fun : ( c : Controller<T> ) => H, initial_value : T | (() => T)) : [T, Controller<T> & H]
+function useController<T, H>( fun : ( c : Controller<T> ) => H, initial_value? : T | (() => T)) : [ H extends ControllerWState<T> ? T : T | undefined, Controller<T> & H]
 
-function useController<T, H>( fun : ( s : ControllerSetter<T> ) => H, initial_value: T | (() => T)) : [T | undefined, Controller<T> & H ]  {
-  const hs                          = React.useState<T>( initial_value );    
-  const [handler, ]                 = React.useState<H>( () => initHandler( hs, fun )  );
+function useController<T, H>( fun : ( c : Controller<T> ) => H, initial_value: T | (() => T)) : [T | undefined, Controller<T> & H ]  {
+  const cs                          = React.useState<T>( initial_value );    
+  const [controller, ]                 = React.useState<Controller<T> & H>( () => initHandler( cs, fun )  );
 
-  handler.state = hs[0];
+  controller.state = cs[0];
 
-  return [ handler.state, handler ];
+  return [ controller.state, controller ];
 }
 
-export { Controller as StateHandler, useController as useStateHandler, ControllerSetter as HandlerSetter }
+export { Controller, useController, ControllerSetter }
 
